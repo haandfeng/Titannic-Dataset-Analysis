@@ -2,21 +2,72 @@
 
 ## 项目简介
 
-这是一个基于泰坦尼克号乘客数据的完整机器学习项目，包含数据探索性分析（EDA）和多种分类算法的实现。项目旨在预测乘客在泰坦尼克号沉船事件中的生存情况。
+这是一个基于泰坦尼克号乘客数据的完整机器学习项目，采用模块化设计，包含数据探索性分析（EDA）和多种分类算法的实现。项目旨在预测乘客在泰坦尼克号沉船事件中的生存情况。
 
 ## 项目结构
 
 ```
 Titannic Dataset Analysis/
+├── config/                      # 配置模块
+│   ├── __init__.py
+│   └── settings.py             # 项目配置管理
+├── data/                        # 数据模块
+│   ├── __init__.py
+│   ├── loader.py               # 数据加载器
+│   └── preprocessor.py         # 数据预处理器
+├── eda/                         # 探索性数据分析模块
+│   ├── __init__.py
+│   └── analysis.py             # EDA分析器
+├── models/                      # 模型模块
+│   ├── __init__.py
+│   ├── base.py                 # 基础模型类
+│   ├── knn.py                  # K近邻模型
+│   ├── logistic_regression.py  # 逻辑回归模型
+│   ├── neural_network.py       # 神经网络模型
+│   └── random_forest.py        # 随机森林模型
+├── utils/                       # 工具模块
+│   ├── __init__.py
+│   └── metrics.py              # 模型评估工具
+├── experiments/                # 实验模块
+│   ├── __init__.py
+│   └── run_experiments.py      # 实验运行脚本
+├── output/                      # 输出目录（自动创建）
+│   ├── models/                 # 保存的模型
+│   ├── results/                # 评估结果
+│   └── plots/                  # 图表
 ├── train.csv                    # 训练数据集
-├── Titannic EDA.py              # 探索性数据分析脚本
-├── KNN.py                       # K近邻分类算法
-├── logistics_regression.py      # 逻辑回归分类算法
-├── neural_network.py            # 神经网络分类算法
-├── Random_forest.py             # 随机森林分类算法（含超参数调优）
+├── main.py                      # 主入口脚本
+├── requirements.txt             # 依赖包列表
 ├── report.docx                  # 项目报告文档
 └── README.md                    # 本文件
 ```
+
+## 模块化设计优势
+
+### 1. **配置管理** (`config/`)
+- 集中管理所有配置参数
+- 易于修改和维护
+- 支持不同环境的配置
+
+### 2. **数据模块** (`data/`)
+- `DataLoader`: 统一的数据加载接口
+- `DataPreprocessor`: 可复用的数据预处理流程
+- 避免代码重复
+
+### 3. **EDA模块** (`eda/`)
+- `EDAAnalyzer`: 封装所有EDA分析功能
+- 支持图表保存
+- 可单独运行或集成使用
+
+### 4. **模型模块** (`models/`)
+- `BaseModel`: 统一的模型接口
+- 每个模型独立实现，易于扩展
+- 支持模型保存和加载
+
+### 5. **工具模块** (`utils/`)
+- `ModelEvaluator`: 统一的评估接口
+- 支持多种评估指标
+- 自动生成报告和可视化
 
 ## 数据集说明
 
@@ -32,186 +83,175 @@ Titannic Dataset Analysis/
   - `Embarked`: 登船港口
   - `Cabin`: 船舱号
 
-## 文件说明
-
-### 1. Titannic EDA.py - 探索性数据分析
-
-该文件提供了全面的数据探索功能，包含以下分析函数：
-
-- `eda_overall_survival_rate()`: 整体生存率统计
-- `eda_survival_by_sex()`: 按性别分析生存率
-- `eda_survival_by_pclass()`: 按舱位等级分析生存率
-- `eda_age_distribution_and_survival()`: 年龄分布与生存率关系
-- `eda_family_size_and_isalone()`: 家庭规模与是否独自出行对生存的影响
-- `eda_embarked_and_survival()`: 登船港口与生存率关系
-- `eda_fare_and_cabin()`: 票价和船舱信息分析
-
-**使用方法**:
-```python
-python Titannic EDA.py
-```
-
-### 2. KNN.py - K近邻分类
-
-使用K近邻算法进行生存预测。
-
-**特点**:
-- K值: 5 (可调整)
-- 距离度量: 欧氏距离 (Minkowski, p=2)
-- 权重: 均匀权重
-
-**运行**:
-```python
-python KNN.py
-```
-
-### 3. logistics_regression.py - 逻辑回归分类
-
-使用逻辑回归进行二分类预测。
-
-**特点**:
-- 最大迭代次数: 1000
-- 使用标准化特征以提高收敛速度
-
-**运行**:
-```python
-python logistics_regression.py
-```
-
-### 4. neural_network.py - 神经网络分类
-
-使用多层感知机（MLP）进行分类。
-
-**网络结构**:
-- 隐藏层: (2, 1) - 两个隐藏层，分别有2个和1个神经元
-- 激活函数: ReLU
-- 优化器: Adam
-- L2正则化: α = 1e-4
-- 学习率: 1e-3
-- 最大迭代次数: 300
-
-**运行**:
-```python
-python neural_network.py
-```
-
-### 5. Random_forest.py - 随机森林分类
-
-使用随机森林算法，并通过随机搜索进行超参数调优。
-
-**特点**:
-- 使用 `RandomizedSearchCV` 进行超参数优化
-- 搜索参数包括:
-  - `n_estimators`: 树的数量 (1-100)
-  - `max_depth`: 最大深度
-  - `min_samples_split`: 分裂所需最小样本数
-  - `min_samples_leaf`: 叶子节点最小样本数
-  - `max_features`: 每次分裂考虑的特征数
-  - `class_weight`: 类别权重
-- 5折交叉验证
-- 搜索迭代次数: 40次
-
-**运行**:
-```python
-python Random_forest.py
-```
-
-## 数据预处理流程
-
-所有模型脚本都遵循统一的数据预处理流程：
-
-1. **特征分离**:
-   - 数值特征: `Age`, `SibSp`, `Parch`, `Fare`
-   - 类别特征: `Pclass` (强制转换为类别), `Sex`, `Embarked`, `Cabin`, `Name`, `Ticket`
-
-2. **数值特征处理**:
-   - 缺失值填充: 使用训练集的中位数填充
-   - 标准化: 使用 `StandardScaler` 进行Z-score标准化
-
-3. **类别特征处理**:
-   - 缺失值填充: 使用训练集的众数填充
-   - 编码: 使用 `OneHotEncoder` 进行独热编码
-
-4. **数据划分**:
-   - 训练集/测试集比例: 80/20
-   - 使用分层抽样 (`stratify=y`) 保持类别分布
-   - 随机种子: 42
-
-## 评估指标
-
-所有模型都使用以下指标进行评估：
-
-- **准确率 (Accuracy)**: 正确预测的比例
-- **F1分数 (F1 Score)**: 精确率和召回率的调和平均
-- **召回率 (Recall)**: 真正例率
-- **混淆矩阵 (Confusion Matrix)**: 详细的分类结果矩阵
-- **分类报告 (Classification Report)**: 包含精确率、召回率、F1分数等详细指标
-
 ## 环境要求
 
 ### Python 版本
 Python 3.7+
 
-### 依赖包
-```bash
-pip install pandas numpy scikit-learn matplotlib scipy
-```
-
-或者使用 requirements.txt (如果存在):
+### 安装依赖
 ```bash
 pip install -r requirements.txt
 ```
 
+依赖包包括：
+- pandas >= 1.3.0
+- numpy >= 1.21.0
+- scikit-learn >= 1.0.0
+- matplotlib >= 3.4.0
+- scipy >= 1.7.0
+
 ## 使用说明
 
-1. **准备数据**: 确保 `train.csv` 文件在项目根目录下
+### 方式一：使用主入口脚本（推荐）
 
-2. **运行EDA**: 首先运行探索性数据分析了解数据特征
-   ```bash
-   python "Titannic EDA.py"
-   ```
+#### 1. 运行探索性数据分析
+```bash
+python main.py eda
+```
 
-3. **运行模型**: 可以单独运行任意一个模型脚本
-   ```bash
-   python KNN.py
-   python logistics_regression.py
-   python neural_network.py
-   python Random_forest.py
-   ```
+#### 2. 运行单个模型
+```bash
+# K近邻
+python main.py model --model knn
 
-4. **查看结果**: 每个脚本运行后会输出详细的评估指标和分类报告
+# 逻辑回归
+python main.py model --model logistic
 
-## 注意事项
+# 神经网络
+python main.py model --model neural
 
-1. **文件路径**: 部分脚本中的文件路径可能需要根据实际情况修改（当前为Windows路径格式）
+# 随机森林
+python main.py model --model rf
+```
 
-2. **数据路径**: 如果 `train.csv` 不在当前目录，需要修改各脚本中的文件路径
+#### 3. 运行所有模型
+```bash
+python main.py all
+```
 
-3. **可视化**: EDA脚本会显示多个图表，需要图形界面支持
+### 方式二：使用实验脚本
 
-4. **计算资源**: 随机森林的超参数搜索可能需要较长时间，建议在性能较好的机器上运行
+直接运行实验脚本，会依次运行所有模型：
+```bash
+python experiments/run_experiments.py
+```
 
-## 项目特点
+### 方式三：在代码中使用模块
 
-- ✅ 完整的数据预处理流程
-- ✅ 多种机器学习算法实现
-- ✅ 详细的探索性数据分析
-- ✅ 统一的评估指标体系
-- ✅ 超参数自动调优（随机森林）
-- ✅ 规范的代码结构和注释
+```python
+from data import DataLoader, DataPreprocessor
+from models import KNNModel
+from utils import ModelEvaluator
 
-## 后续改进建议
+# 加载数据
+loader = DataLoader()
+X_train, X_test, y_train, y_test = loader.load_train_test_split()
 
-1. 特征工程: 可以尝试创建更多衍生特征（如标题提取、家庭规模组合等）
-2. 模型集成: 可以尝试将多个模型进行集成（投票、堆叠等）
-3. 交叉验证: 可以添加更详细的交叉验证分析
-4. 可视化增强: 可以添加更多模型性能可视化（ROC曲线、学习曲线等）
+# 预处理
+preprocessor = DataPreprocessor()
+X_train_processed = preprocessor.fit_transform(X_train)
+X_test_processed = preprocessor.transform(X_test)
 
-## 作者
+# 训练模型
+model = KNNModel()
+model.fit(X_train_processed, y_train)
 
-本项目用于学习和研究机器学习分类问题。
+# 评估
+y_pred = model.predict(X_test_processed)
+evaluator = ModelEvaluator("KNN")
+evaluator.print_report(y_test, y_pred)
+```
 
-## 许可证
+## 模型说明
 
-本项目仅供学习和研究使用。
+### 1. K近邻 (KNN)
+- **参数**: K=5, 欧氏距离
+- **特点**: 简单直观，适合小数据集
+
+### 2. 逻辑回归 (Logistic Regression)
+- **参数**: max_iter=1000
+- **特点**: 线性模型，可解释性强
+
+### 3. 神经网络 (Neural Network)
+- **结构**: 隐藏层 (64, 32)
+- **激活函数**: ReLU
+- **优化器**: Adam
+- **特点**: 非线性建模能力强
+
+### 4. 随机森林 (Random Forest)
+- **特点**: 使用随机搜索进行超参数优化
+- **搜索参数**: n_estimators, max_depth, min_samples_split等
+- **交叉验证**: 5折
+
+## 数据预处理流程
+
+所有模型使用统一的数据预处理流程：
+
+1. **特征识别**:
+   - 自动识别数值特征和类别特征
+   - 支持强制指定类别特征（如Pclass）
+
+2. **数值特征处理**:
+   - 缺失值填充: 使用训练集的中位数
+   - 标准化: Z-score标准化
+
+3. **类别特征处理**:
+   - 缺失值填充: 使用训练集的众数
+   - 编码: One-Hot编码
+
+4. **数据划分**:
+   - 训练集/测试集: 80/20
+   - 分层抽样保持类别分布
+   - 随机种子: 42
+
+## 评估指标
+
+所有模型使用以下指标进行评估：
+
+- **准确率 (Accuracy)**: 正确预测的比例
+- **精确率 (Precision)**: 正例预测的准确性
+- **召回率 (Recall)**: 正例的覆盖率
+- **F1分数 (F1 Score)**: 精确率和召回率的调和平均
+- **ROC-AUC**: ROC曲线下面积（如果支持概率预测）
+- **混淆矩阵 (Confusion Matrix)**: 详细的分类结果矩阵
+- **分类报告 (Classification Report)**: 包含所有指标的详细报告
+
+## 输出文件
+
+运行实验后，会在 `output/` 目录下生成：
+
+- `models/`: 保存的训练好的模型（.pkl格式）
+- `results/`: 评估结果（CSV格式）
+- `plots/`: 可视化图表（PNG格式，包括EDA图表和ROC曲线）
+
+## 扩展性
+
+### 添加新模型
+
+1. 在 `models/` 目录下创建新文件
+2. 继承 `BaseModel` 类
+3. 实现 `_create_model` 方法
+4. 在 `models/__init__.py` 中导出
+5. 在 `config/settings.py` 中添加配置
+
+示例：
+```python
+from .base import BaseModel
+from sklearn.svm import SVC
+
+class SVMModel(BaseModel):
+    def __init__(self, **kwargs):
+        super().__init__('SVM', **kwargs)
+    
+    def _create_model(self, **kwargs):
+        return SVC(**kwargs)
+```
+
+### 修改配置
+
+直接编辑 `config/settings.py` 文件，修改相应的配置参数。
+
+### 自定义预处理
+
+继承 `DataPreprocessor` 类，重写相应方法。
 
