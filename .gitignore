@@ -32,13 +32,12 @@ ENV/
 *.swo
 *~
 
-# 输出目录
-output/
-*.pkl
-*.csv
-*.png
-*.jpg
-*.pdf
+# 输出目录 - 只忽略特定文件类型，保留图片
+output/**/*.pkl
+output/**/*.csv
+output/**/*.pdf
+output/**/*.log
+# 但保留图片文件（.png, .jpg等）以便版本控制
 
 # 数据文件（如果不想提交）
 # train.csv

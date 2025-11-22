@@ -6,6 +6,13 @@ from pathlib import Path
 from typing import Optional, Dict
 from config import Config
 
+# Set English font and style
+plt.rcParams['font.sans-serif'] = ['DejaVu Sans', 'Arial', 'Helvetica']
+plt.rcParams['axes.unicode_minus'] = False
+
+# Unified color: slategray (灰蓝色)
+UNIFIED_COLOR = 'slategray'
+
 
 class EDAAnalyzer:
     """探索性数据分析器"""
@@ -45,10 +52,20 @@ class EDAAnalyzer:
         
         if plot:
             fig, ax = plt.subplots(figsize=(8, 6))
-            ax.bar(summary["Survived"], summary["Rate"])
-            ax.set_ylabel("Survival Rate")
-            ax.set_title("Overall Survival Rate")
+            bars = ax.bar(summary["Survived"], summary["Rate"], color=UNIFIED_COLOR,
+                         edgecolor='white', alpha=0.8, linewidth=1.5)
+            ax.set_ylabel("Survival Rate", fontsize=11, fontweight='bold')
+            ax.set_title("Overall Survival Rate", fontsize=13, fontweight='bold', pad=10)
             ax.set_ylim(0, 1)
+            ax.grid(axis='y', alpha=0.3, linestyle='--')
+            ax.spines['top'].set_visible(False)
+            ax.spines['right'].set_visible(False)
+            # Add value labels
+            for bar in bars:
+                height = bar.get_height()
+                ax.text(bar.get_x() + bar.get_width()/2., height,
+                       f'{height:.2f}', ha='center', va='bottom',
+                       fontsize=10, fontweight='bold')
             if self.save_plots:
                 plt.savefig(self.plots_dir / "overall_survival_rate.png", dpi=300, bbox_inches='tight')
             plt.show()
@@ -71,10 +88,20 @@ class EDAAnalyzer:
         
         if plot:
             fig, ax = plt.subplots(figsize=(8, 6))
-            ax.bar(summary["Sex"], summary["Survival_Rate"])
-            ax.set_ylabel("Survival Rate")
-            ax.set_title("Survival Rate by Sex")
+            bars = ax.bar(summary["Sex"], summary["Survival_Rate"], color=UNIFIED_COLOR,
+                         edgecolor='white', alpha=0.8, linewidth=1.5)
+            ax.set_ylabel("Survival Rate", fontsize=11, fontweight='bold')
+            ax.set_title("Survival Rate by Sex", fontsize=13, fontweight='bold', pad=10)
             ax.set_ylim(0, 1)
+            ax.grid(axis='y', alpha=0.3, linestyle='--')
+            ax.spines['top'].set_visible(False)
+            ax.spines['right'].set_visible(False)
+            # Add value labels
+            for bar in bars:
+                height = bar.get_height()
+                ax.text(bar.get_x() + bar.get_width()/2., height,
+                       f'{height:.2f}', ha='center', va='bottom',
+                       fontsize=10, fontweight='bold')
             if self.save_plots:
                 plt.savefig(self.plots_dir / "survival_by_sex.png", dpi=300, bbox_inches='tight')
             plt.show()
@@ -97,11 +124,21 @@ class EDAAnalyzer:
         
         if plot:
             fig, ax = plt.subplots(figsize=(8, 6))
-            ax.bar(summary["Pclass"].astype(str), summary["Survival_Rate"])
-            ax.set_xlabel("Pclass")
-            ax.set_ylabel("Survival Rate")
-            ax.set_title("Survival Rate by Passenger Class")
+            bars = ax.bar(summary["Pclass"].astype(str), summary["Survival_Rate"], 
+                         color=UNIFIED_COLOR, edgecolor='white', alpha=0.8, linewidth=1.5)
+            ax.set_xlabel("Pclass", fontsize=11, fontweight='bold')
+            ax.set_ylabel("Survival Rate", fontsize=11, fontweight='bold')
+            ax.set_title("Survival Rate by Passenger Class", fontsize=13, fontweight='bold', pad=10)
             ax.set_ylim(0, 1)
+            ax.grid(axis='y', alpha=0.3, linestyle='--')
+            ax.spines['top'].set_visible(False)
+            ax.spines['right'].set_visible(False)
+            # Add value labels
+            for bar in bars:
+                height = bar.get_height()
+                ax.text(bar.get_x() + bar.get_width()/2., height,
+                       f'{height:.2f}', ha='center', va='bottom',
+                       fontsize=10, fontweight='bold')
             if self.save_plots:
                 plt.savefig(self.plots_dir / "survival_by_pclass.png", dpi=300, bbox_inches='tight')
             plt.show()
@@ -123,7 +160,7 @@ class EDAAnalyzer:
         sub = df.dropna(subset=["Age"]).copy()
         sub["AgeBin"] = pd.cut(sub["Age"], bins=bins, right=False, include_lowest=True)
         
-        grouped = sub.groupby("AgeBin")["Survived"]
+        grouped = sub.groupby("AgeBin", observed=True)["Survived"]
         summary = grouped.agg(
             Count="count",
             Survived_Sum="sum",
@@ -135,21 +172,35 @@ class EDAAnalyzer:
         
         if plot:
             fig, ax = plt.subplots(figsize=(10, 6))
-            ax.hist(sub["Age"], bins=20)
-            ax.set_xlabel("Age")
-            ax.set_ylabel("Count")
-            ax.set_title("Age Distribution")
+            n, bins, patches = ax.hist(sub["Age"], bins=20, color=UNIFIED_COLOR,
+                                      edgecolor='white', alpha=0.8, linewidth=0.5)
+            ax.set_xlabel("Age", fontsize=11, fontweight='bold')
+            ax.set_ylabel("Count", fontsize=11, fontweight='bold')
+            ax.set_title("Age Distribution", fontsize=13, fontweight='bold', pad=10)
+            ax.grid(axis='y', alpha=0.3, linestyle='--')
+            ax.spines['top'].set_visible(False)
+            ax.spines['right'].set_visible(False)
             if self.save_plots:
                 plt.savefig(self.plots_dir / "age_distribution.png", dpi=300, bbox_inches='tight')
             plt.show()
             
             fig, ax = plt.subplots(figsize=(10, 6))
             x_labels = summary["AgeBin"].astype(str)
-            ax.bar(x_labels, summary["Survival_Rate"])
-            ax.set_ylabel("Survival Rate")
-            ax.set_title("Survival Rate by Age Bin")
+            bars = ax.bar(x_labels, summary["Survival_Rate"], color=UNIFIED_COLOR,
+                         edgecolor='white', alpha=0.8, linewidth=1.5)
+            ax.set_ylabel("Survival Rate", fontsize=11, fontweight='bold')
+            ax.set_title("Survival Rate by Age Bin", fontsize=13, fontweight='bold', pad=10)
             ax.set_ylim(0, 1)
+            ax.grid(axis='y', alpha=0.3, linestyle='--')
+            ax.spines['top'].set_visible(False)
+            ax.spines['right'].set_visible(False)
             plt.xticks(rotation=45)
+            # Add value labels
+            for bar in bars:
+                height = bar.get_height()
+                ax.text(bar.get_x() + bar.get_width()/2., height,
+                       f'{height:.2f}', ha='center', va='bottom',
+                       fontsize=9, fontweight='bold')
             plt.tight_layout()
             if self.save_plots:
                 plt.savefig(self.plots_dir / "survival_by_age_bin.png", dpi=300, bbox_inches='tight')
@@ -188,21 +239,41 @@ class EDAAnalyzer:
         
         if plot:
             fig, ax = plt.subplots(figsize=(10, 6))
-            ax.bar(fs_grouped["FamilySize"].astype(str), fs_grouped["Survival_Rate"])
-            ax.set_xlabel("FamilySize")
-            ax.set_ylabel("Survival Rate")
-            ax.set_title("Survival Rate by FamilySize")
+            bars = ax.bar(fs_grouped["FamilySize"].astype(str), fs_grouped["Survival_Rate"],
+                         color=UNIFIED_COLOR, edgecolor='white', alpha=0.8, linewidth=1.5)
+            ax.set_xlabel("FamilySize", fontsize=11, fontweight='bold')
+            ax.set_ylabel("Survival Rate", fontsize=11, fontweight='bold')
+            ax.set_title("Survival Rate by FamilySize", fontsize=13, fontweight='bold', pad=10)
             ax.set_ylim(0, 1)
+            ax.grid(axis='y', alpha=0.3, linestyle='--')
+            ax.spines['top'].set_visible(False)
+            ax.spines['right'].set_visible(False)
+            # Add value labels
+            for bar in bars:
+                height = bar.get_height()
+                ax.text(bar.get_x() + bar.get_width()/2., height,
+                       f'{height:.2f}', ha='center', va='bottom',
+                       fontsize=9, fontweight='bold')
             if self.save_plots:
                 plt.savefig(self.plots_dir / "survival_by_family_size.png", dpi=300, bbox_inches='tight')
             plt.show()
             
             fig, ax = plt.subplots(figsize=(8, 6))
             x_labels = ["Has family (0)", "Alone (1)"]
-            ax.bar(x_labels, ia_grouped["Survival_Rate"])
-            ax.set_ylabel("Survival Rate")
-            ax.set_title("Survival Rate by IsAlone")
+            bars = ax.bar(x_labels, ia_grouped["Survival_Rate"], color=UNIFIED_COLOR,
+                         edgecolor='white', alpha=0.8, linewidth=1.5)
+            ax.set_ylabel("Survival Rate", fontsize=11, fontweight='bold')
+            ax.set_title("Survival Rate by IsAlone", fontsize=13, fontweight='bold', pad=10)
             ax.set_ylim(0, 1)
+            ax.grid(axis='y', alpha=0.3, linestyle='--')
+            ax.spines['top'].set_visible(False)
+            ax.spines['right'].set_visible(False)
+            # Add value labels
+            for bar in bars:
+                height = bar.get_height()
+                ax.text(bar.get_x() + bar.get_width()/2., height,
+                       f'{height:.2f}', ha='center', va='bottom',
+                       fontsize=10, fontweight='bold')
             if self.save_plots:
                 plt.savefig(self.plots_dir / "survival_by_isalone.png", dpi=300, bbox_inches='tight')
             plt.show()
@@ -230,11 +301,21 @@ class EDAAnalyzer:
         
         if plot:
             fig, ax = plt.subplots(figsize=(8, 6))
-            ax.bar(grouped["Embarked"], grouped["Survival_Rate"])
-            ax.set_xlabel("Embarked")
-            ax.set_ylabel("Survival Rate")
-            ax.set_title("Survival Rate by Embarked Port")
+            bars = ax.bar(grouped["Embarked"], grouped["Survival_Rate"], color=UNIFIED_COLOR,
+                         edgecolor='white', alpha=0.8, linewidth=1.5)
+            ax.set_xlabel("Embarked", fontsize=11, fontweight='bold')
+            ax.set_ylabel("Survival Rate", fontsize=11, fontweight='bold')
+            ax.set_title("Survival Rate by Embarked Port", fontsize=13, fontweight='bold', pad=10)
             ax.set_ylim(0, 1)
+            ax.grid(axis='y', alpha=0.3, linestyle='--')
+            ax.spines['top'].set_visible(False)
+            ax.spines['right'].set_visible(False)
+            # Add value labels
+            for bar in bars:
+                height = bar.get_height()
+                ax.text(bar.get_x() + bar.get_width()/2., height,
+                       f'{height:.2f}', ha='center', va='bottom',
+                       fontsize=10, fontweight='bold')
             if self.save_plots:
                 plt.savefig(self.plots_dir / "survival_by_embarked.png", dpi=300, bbox_inches='tight')
             plt.show()
@@ -261,7 +342,7 @@ class EDAAnalyzer:
         
         df["FareBin"] = pd.cut(df["Fare"], bins=fare_bins, right=False, include_lowest=True)
         
-        fare_grouped = df.groupby("FareBin")["Survived"].agg(
+        fare_grouped = df.groupby("FareBin", observed=True)["Survived"].agg(
             Count="count",
             Survived_Sum="sum",
             Survival_Rate="mean"
@@ -282,21 +363,35 @@ class EDAAnalyzer:
         
         if plot:
             fig, ax = plt.subplots(figsize=(10, 6))
-            ax.hist(df["Fare"], bins=30)
-            ax.set_xlabel("Fare")
-            ax.set_ylabel("Count")
-            ax.set_title("Fare Distribution")
+            n, bins, patches = ax.hist(df["Fare"], bins=30, color=UNIFIED_COLOR,
+                                     edgecolor='white', alpha=0.8, linewidth=0.5)
+            ax.set_xlabel("Fare", fontsize=11, fontweight='bold')
+            ax.set_ylabel("Count", fontsize=11, fontweight='bold')
+            ax.set_title("Fare Distribution", fontsize=13, fontweight='bold', pad=10)
+            ax.grid(axis='y', alpha=0.3, linestyle='--')
+            ax.spines['top'].set_visible(False)
+            ax.spines['right'].set_visible(False)
             if self.save_plots:
                 plt.savefig(self.plots_dir / "fare_distribution.png", dpi=300, bbox_inches='tight')
             plt.show()
             
             fig, ax = plt.subplots(figsize=(10, 6))
             x_labels = fare_grouped["FareBin"].astype(str)
-            ax.bar(x_labels, fare_grouped["Survival_Rate"])
-            ax.set_ylabel("Survival Rate")
-            ax.set_title("Survival Rate by Fare Bin")
+            bars = ax.bar(x_labels, fare_grouped["Survival_Rate"], color=UNIFIED_COLOR,
+                         edgecolor='white', alpha=0.8, linewidth=1.5)
+            ax.set_ylabel("Survival Rate", fontsize=11, fontweight='bold')
+            ax.set_title("Survival Rate by Fare Bin", fontsize=13, fontweight='bold', pad=10)
             ax.set_ylim(0, 1)
+            ax.grid(axis='y', alpha=0.3, linestyle='--')
+            ax.spines['top'].set_visible(False)
+            ax.spines['right'].set_visible(False)
             plt.xticks(rotation=45)
+            # Add value labels
+            for bar in bars:
+                height = bar.get_height()
+                ax.text(bar.get_x() + bar.get_width()/2., height,
+                       f'{height:.2f}', ha='center', va='bottom',
+                       fontsize=9, fontweight='bold')
             plt.tight_layout()
             if self.save_plots:
                 plt.savefig(self.plots_dir / "survival_by_fare_bin.png", dpi=300, bbox_inches='tight')
@@ -304,10 +399,20 @@ class EDAAnalyzer:
             
             fig, ax = plt.subplots(figsize=(8, 6))
             x_labels = ["No cabin (0)", "Has cabin (1)"]
-            ax.bar(x_labels, cabin_grouped["Survival_Rate"])
-            ax.set_ylabel("Survival Rate")
-            ax.set_title("Survival Rate by Cabin Info")
+            bars = ax.bar(x_labels, cabin_grouped["Survival_Rate"], color=UNIFIED_COLOR,
+                         edgecolor='white', alpha=0.8, linewidth=1.5)
+            ax.set_ylabel("Survival Rate", fontsize=11, fontweight='bold')
+            ax.set_title("Survival Rate by Cabin Info", fontsize=13, fontweight='bold', pad=10)
             ax.set_ylim(0, 1)
+            ax.grid(axis='y', alpha=0.3, linestyle='--')
+            ax.spines['top'].set_visible(False)
+            ax.spines['right'].set_visible(False)
+            # Add value labels
+            for bar in bars:
+                height = bar.get_height()
+                ax.text(bar.get_x() + bar.get_width()/2., height,
+                       f'{height:.2f}', ha='center', va='bottom',
+                       fontsize=10, fontweight='bold')
             if self.save_plots:
                 plt.savefig(self.plots_dir / "survival_by_cabin.png", dpi=300, bbox_inches='tight')
             plt.show()
@@ -334,4 +439,3 @@ class EDAAnalyzer:
         print("\n" + "=" * 60)
         print("EDA分析完成")
         print("=" * 60)
-

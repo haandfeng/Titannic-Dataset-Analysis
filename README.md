@@ -17,7 +17,8 @@ Titannic Dataset Analysis/
 │   └── preprocessor.py         # 数据预处理器
 ├── eda/                         # 探索性数据分析模块
 │   ├── __init__.py
-│   └── analysis.py             # EDA分析器
+│   ├── analysis.py             # EDA分析器
+│   └── data_profiler.py        # 数据概览和可视化
 ├── models/                      # 模型模块
 │   ├── __init__.py
 │   ├── base.py                 # 基础模型类
@@ -37,9 +38,12 @@ Titannic Dataset Analysis/
 │   └── plots/                  # 图表
 ├── train.csv                    # 训练数据集
 ├── main.py                      # 主入口脚本
+├── visualize_data.py            # 数据可视化脚本
 ├── requirements.txt             # 依赖包列表
 ├── report.docx                  # 项目报告文档
-└── README.md                    # 本文件
+├── README.md                    # 本文件
+├── DATA_VISUALIZATION_GUIDE.md  # 数据可视化指南
+└── MIGRATION_GUIDE.md          # 迁移指南
 ```
 
 ## 模块化设计优势
@@ -99,17 +103,24 @@ pip install -r requirements.txt
 - scikit-learn >= 1.0.0
 - matplotlib >= 3.4.0
 - scipy >= 1.7.0
+- seaborn >= 0.11.0（用于美观的数据可视化）
 
 ## 使用说明
 
 ### 方式一：使用主入口脚本（推荐）
 
-#### 1. 运行探索性数据分析
+#### 1. 运行数据概览和可视化（推荐先运行）
+```bash
+python main.py profile
+```
+这会生成美观的数据信息表格、分布图、缺失值可视化、相关性热力图等。
+
+#### 2. 运行探索性数据分析
 ```bash
 python main.py eda
 ```
 
-#### 2. 运行单个模型
+#### 3. 运行单个模型
 ```bash
 # K近邻
 python main.py model --model knn
@@ -124,10 +135,20 @@ python main.py model --model neural
 python main.py model --model rf
 ```
 
-#### 3. 运行所有模型
+#### 4. 运行所有模型
 ```bash
 python main.py all
 ```
+
+### 快速数据可视化
+
+```bash
+python main.py eda
+```
+
+
+
+所有图表会自动保存到 `output/plots/` 目录。
 
 ### 方式二：使用实验脚本
 

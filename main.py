@@ -8,7 +8,7 @@ project_root = Path(__file__).parent
 sys.path.insert(0, str(project_root))
 
 from data import DataLoader, DataPreprocessor
-from eda import EDAAnalyzer
+from eda import EDAAnalyzer, DataVisualizer
 from models import (
     KNNModel,
     LogisticRegressionModel,
@@ -31,6 +31,20 @@ def run_eda():
     
     analyzer = EDAAnalyzer(save_plots=True)
     analyzer.run_full_analysis(df)
+
+
+def run_visualization():
+    """运行数据可视化（boxplots和key_features_distribution）"""
+    print("="*60)
+    print("运行数据可视化")
+    print("="*60)
+    
+    Config.create_directories()
+    loader = DataLoader()
+    df = loader.load()
+    
+    visualizer = DataVisualizer(save_plots=True)
+    visualizer.generate_visualizations(df, target_col='Survived')
 
 
 def run_model(model_name: str):
@@ -103,6 +117,7 @@ def main():
     
     if args.command == 'eda':
         run_eda()
+        run_visualization()
     elif args.command == 'model':
         if not args.model:
             print("错误: 使用 --model 参数指定要运行的模型")
