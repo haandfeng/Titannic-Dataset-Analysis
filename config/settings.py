@@ -41,14 +41,14 @@ class Config:
             'random_state': 42
         },
         'neural_network': {
-            'hidden_layer_sizes': (64, 32),
+            'hidden_layer_sizes': (2, 1),
             'activation': 'relu',
             'solver': 'adam',
             'alpha': 1e-4,
             'learning_rate_init': 1e-3,
             'max_iter': 300,
             'random_state': 42,
-            'verbose': False
+            'verbose': True
         },
         'random_forest': {
             'base_params': {

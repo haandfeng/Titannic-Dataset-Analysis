@@ -291,4 +291,108 @@ class DataVisualizer:
         print("Visualization completed!")
         print(f"All outputs saved to: {self.plots_dir}")
         print("=" * 100 + "\n")
+    
+    def get_model_results(self) -> pd.DataFrame:
+        """
+        获取模型性能结果数据
+        
+        Returns:
+            包含模型性能指标的DataFrame
+        """
+        data = {
+            "Model": [
+                "KNN",
+                "Logistic Regression",
+                "Neural Network (MLP)",
+                "Random Forest (tuned)"
+            ],
+            "Accuracy": [
+                0.7877094972067039,
+                0.8212290502793296,
+                0.7039106145251397,
+                0.7932960893854749,
+            ],
+            "F1": [
+                0.7121212121212122,
+                0.7538461538461538,
+                0.39080459770114945,
+                0.6942148760330579,
+            ],
+            "Recall": [
+                0.6811594202898551,
+                0.7101449275362319,
+                0.2463768115942029,
+                0.6086956521739131,
+            ],
+        }
+        df = pd.DataFrame(data)
+        return df
+    
+    def plot_metric(self, df: pd.DataFrame, metric: str, save_path: Optional[Path] = None) -> None:
+        """
+        绘制模型性能指标对比图
+        
+        Args:
+            df: 包含模型性能数据的DataFrame
+            metric: 要绘制的指标名称（如'Accuracy', 'F1', 'Recall'）
+            save_path: 保存路径，如果为None则不保存
+        """
+        # 按模型顺序取数据
+        models = df["Model"].tolist()
+        values = df[metric].tolist()
+        
+        fig, ax = plt.subplots(figsize=(10, 6))
+        
+        # Bar chart with unified color (与之前风格一致)
+        bars = ax.bar(models, values, color=UNIFIED_COLOR, alpha=0.8, 
+                     edgecolor='white', linewidth=1.5)
+        
+        ax.set_ylim(0, 1.0)
+        ax.set_ylabel(metric, fontsize=11, fontweight='bold')
+        ax.set_title(f"{metric} Comparison Across Models", 
+                    fontsize=12, fontweight='bold', pad=10)
+        ax.set_xticks(range(len(models)))
+        ax.set_xticklabels(models, rotation=20, ha='right', fontsize=10, fontweight='bold')
+        ax.grid(axis='y', alpha=0.3, linestyle='--')
+        ax.spines['top'].set_visible(False)
+        ax.spines['right'].set_visible(False)
+        
+        # 在柱状图上添加数值标签（与之前风格一致）
+        for bar in bars:
+            height = bar.get_height()
+            ax.text(bar.get_x() + bar.get_width()/2., height,
+                   f'{height:.3f}',
+                   ha='center', va='bottom', fontsize=9, fontweight='bold')
+        
+        plt.tight_layout()
+        
+        # Always save the plot (与之前风格一致)
+        if save_path is not None:
+            plt.savefig(save_path, dpi=300, bbox_inches='tight')
+            print(f"Saved: {save_path}")
+        
+        if self.save_plots:
+            plt.show()
+        else:
+            plt.close()
+    
+    def plot_model_comparison(self, save_path: Optional[Path] = None):
+        """
+        绘制所有模型性能对比图
+        
+        Args:
+            save_path: 保存目录，如果为None则使用默认plots_dir
+        """
+        results_df = self.get_model_results()
+        
+        print("===== Model Performance Summary =====")
+        print(results_df)
+        print()
+        
+        save_dir = save_path if save_path is not None else self.plots_dir
+        
+        # 绘制三个指标的对比图
+        self.plot_metric(results_df, "Accuracy", save_path=save_dir / "accuracy_comparison.png")
+        self.plot_metric(results_df, "F1", save_path=save_dir / "f1_comparison.png")
+        self.plot_metric(results_df, "Recall", save_path=save_dir / "recall_comparison.png")
 

@@ -47,6 +47,17 @@ def run_visualization():
     visualizer.generate_visualizations(df, target_col='Survived')
 
 
+def run_model_comparison():
+    """运行模型性能对比可视化"""
+    print("="*60)
+    print("运行模型性能对比可视化")
+    print("="*60)
+    
+    Config.create_directories()
+    visualizer = DataVisualizer(save_plots=True)
+    visualizer.plot_model_comparison()
+
+
 def run_model(model_name: str):
     """运行单个模型"""
     print(f"运行模型: {model_name}")
@@ -104,8 +115,8 @@ def main():
     parser = argparse.ArgumentParser(description='Titanic数据集分析项目')
     parser.add_argument(
         'command',
-        choices=['eda', 'model', 'all'],
-        help='要执行的命令: eda (探索性分析), model (单个模型), all (所有模型)'
+        choices=['eda', 'model', 'all', 'compare'],
+        help='要执行的命令: eda (探索性分析), model (单个模型), all (所有模型), compare (模型性能对比)'
     )
     parser.add_argument(
         '--model',
@@ -126,6 +137,8 @@ def main():
         run_model(args.model)
     elif args.command == 'all':
         run_all_models()
+    elif args.command == 'compare':
+        run_model_comparison()
 
 
 if __name__ == "__main__":
