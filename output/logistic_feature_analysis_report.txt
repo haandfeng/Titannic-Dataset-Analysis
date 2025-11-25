@@ -1,0 +1,46 @@
+============================================================
+逻辑回归特征影响分析报告
+============================================================
+
+【Top 10 最重要特征（按系数绝对值排序）】
+   feature  coefficient  abs_coefficient         direction
+Sex_female     1.421231         1.421231 Positive (增加生存概率)
+  Sex_male    -1.300635         1.300635 Negative (降低生存概率)
+  Pclass_3    -0.723778         0.723778 Negative (降低生存概率)
+  Pclass_1     0.551742         0.551742 Positive (增加生存概率)
+       Age    -0.506557         0.506557 Negative (降低生存概率)
+Embarked_Q     0.368531         0.368531 Positive (增加生存概率)
+Embarked_S    -0.333750         0.333750 Negative (降低生存概率)
+  Pclass_2     0.292632         0.292632 Positive (增加生存概率)
+   IsAlone    -0.291313         0.291313 Negative (降低生存概率)
+     SibSp    -0.262360         0.262360 Negative (降低生存概率)
+
+【按特征类别汇总】
+            Mean_Coefficient  Count  Mean_Abs_Coefficient
+category                                                 
+Sex                 0.060298      2              1.360933
+Pclass              0.040199      3              0.522717
+Age                -0.506557      1              0.506557
+IsAlone            -0.291313      1              0.291313
+Embarked            0.040199      3              0.262699
+SibSp              -0.262360      1              0.262360
+FamilySize         -0.216337      1              0.216337
+Fare                0.113990      1              0.113990
+Parch              -0.078126      1              0.078126
+
+【详细特征系数】
+   feature  coefficient  abs_coefficient         direction
+Sex_female     1.421231         1.421231 Positive (增加生存概率)
+  Sex_male    -1.300635         1.300635 Negative (降低生存概率)
+  Pclass_3    -0.723778         0.723778 Negative (降低生存概率)
+  Pclass_1     0.551742         0.551742 Positive (增加生存概率)
+       Age    -0.506557         0.506557 Negative (降低生存概率)
+Embarked_Q     0.368531         0.368531 Positive (增加生存概率)
+Embarked_S    -0.333750         0.333750 Negative (降低生存概率)
+  Pclass_2     0.292632         0.292632 Positive (增加生存概率)
+   IsAlone    -0.291313         0.291313 Negative (降低生存概率)
+     SibSp    -0.262360         0.262360 Negative (降低生存概率)
+FamilySize    -0.216337         0.216337 Negative (降低生存概率)
+      Fare     0.113990         0.113990 Positive (增加生存概率)
+Embarked_C     0.085815         0.085815 Positive (增加生存概率)
+     Parch    -0.078126         0.078126 Negative (降低生存概率)

@@ -25,6 +25,26 @@ class DataPreprocessor:
         self.cat_modes: Optional[pd.Series] = None
         self._fitted = False
     
+    def _create_derived_features(self, X: pd.DataFrame) -> pd.DataFrame:
+        """
+        创建衍生特征：FamilySize 和 IsAlone
+        
+        Args:
+            X: 原始特征数据
+            
+        Returns:
+            包含衍生特征的DataFrame
+        """
+        X_work = X.copy()
+        
+        # 创建 FamilySize 特征（如果 SibSp 和 Parch 存在）
+        if 'SibSp' in X_work.columns and 'Parch' in X_work.columns:
+            X_work['FamilySize'] = X_work['SibSp'] + X_work['Parch'] + 1
+            # 创建 IsAlone 特征
+            X_work['IsAlone'] = (X_work['FamilySize'] == 1).astype(int)
+        
+        return X_work
+    
     def _identify_features(self, X: pd.DataFrame) -> Tuple[List[str], List[str]]:
         """
         识别数值特征和类别特征
@@ -58,6 +78,9 @@ class DataPreprocessor:
         Args:
             X_train: 训练集特征
         """
+        # 创建衍生特征
+        X_train = self._create_derived_features(X_train)
+        
         # 识别特征类型
         self.numeric_features, self.categorical_features = self._identify_features(X_train)
         
@@ -90,8 +113,10 @@ class DataPreprocessor:
         if not self._fitted:
             raise ValueError("预处理器尚未拟合，请先调用fit方法")
         
+        # 创建衍生特征（与fit时保持一致）
+        X_work = self._create_derived_features(X)
+        
         # 强制转换某些列为类别
-        X_work = X.copy()
         for col in self.forced_categorical:
             if col in X_work.columns:
                 X_work[col] = X_work[col].astype("object")
